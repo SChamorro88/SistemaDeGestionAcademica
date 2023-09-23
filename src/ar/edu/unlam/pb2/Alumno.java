@@ -1,7 +1,12 @@
 package ar.edu.unlam.pb2;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class Alumno {
 
@@ -11,14 +16,20 @@ public class Alumno {
 	private LocalDate fechaNacimiento;
 	private LocalDate fechaIngreso;
 	private Integer dni;
+	private Set<Materia> materiasAprobadas;
+	private List<Curso> cursosInscritos;
 
-	public Alumno(int id, Integer dni, String nombre, String apellido, LocalDate fechaNacimiento, LocalDate fechaIngreso) {
+	public Alumno(int id, Integer dni, String nombre, String apellido, LocalDate fechaNacimiento,
+			LocalDate fechaIngreso) {
 		this.id = id;
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.fechaNacimiento = fechaNacimiento;
 		this.fechaIngreso = fechaIngreso;
 		this.dni = dni;
+		this.materiasAprobadas = new HashSet<>();
+		this.cursosInscritos = new ArrayList<Curso>();
+
 	}
 
 	public int getId() {
@@ -85,8 +96,36 @@ public class Alumno {
 		Alumno other = (Alumno) obj;
 		return Objects.equals(dni, other.dni);
 	}
-	
-	
-	
+
+	public boolean tieneCorrelativaAprobada(Materia correlativa) {
+		for (Materia materiaAprobada : materiasAprobadas) {
+			if (materiaAprobada.equals(correlativa) && materiaAprobada.getNota() >= 4) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean estaInscritoEnOtroCurso(Curso curso) {
+		for (Curso cursoInscrito : cursosInscritos) {
+			if (cursoInscrito != curso && cursoInscrito.getFechaCurso().equals(curso.getFechaCurso())
+					&& cursoInscrito.getTurno() == curso.getTurno()) {
+				return true;
+
+			}
+		}
+		return false;
+
+	}
+
+	public void inscribirseACurso(Curso curso) {
+		if (curso != null) {
+			if (!cursosInscritos.contains(curso)) {
+				cursosInscritos.add(curso);
+				curso.agregarAlumnoInscrito(this);
+			}
+		}
+
+	}
 
 }

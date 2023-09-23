@@ -15,9 +15,10 @@ public class TestSistemaDeGestionAcademica {
 	private Materia materia;
 	private Alumno alumno;
 	private Docente docente;
-	private CicloLectivo cicloElectivo;
+	private CicloLectivo cicloLectivo;
 	private Comision comision;
 	private Aula aula;
+	private Curso curso;
 
 	// ---------------------------------------------------------------------------
 	@Before
@@ -37,20 +38,21 @@ public class TestSistemaDeGestionAcademica {
 		docente = new Docente(1, dniDocente, "Pedro", "Perez", fechaNacimientoDocente, fechaIngesoDocente);
 
 		Integer idCiclo = 1;
-		LocalDate fechaInicioCicloElectivo = LocalDate.of(2023, 03, 15);
-		LocalDate fechaFinalizacionCicloElectivo = LocalDate.of(2023, 07, 30);
-		LocalDate fechaInicioInscripcion = LocalDate.of(2023, 02, 10);
-		LocalDate fechaFinalizacionInscripcion = LocalDate.of(2023, 03, 03);
-		cicloElectivo = new CicloLectivo(idCiclo, fechaInicioCicloElectivo, fechaFinalizacionCicloElectivo,
+		LocalDate fechaInicioCicloElectivo = LocalDate.of(2024, 7, 31);
+		LocalDate fechaFinalizacionCicloElectivo = LocalDate.of(2024, 7, 31);
+		LocalDate fechaInicioInscripcion = LocalDate.of(2023, 8, 1);
+		LocalDate fechaFinalizacionInscripcion =  LocalDate.of(2023, 8, 31);
+		cicloLectivo = new CicloLectivo(idCiclo, fechaInicioCicloElectivo, fechaFinalizacionCicloElectivo,
 				fechaInicioInscripcion, fechaFinalizacionInscripcion);
 
 		Turnos turno = Turnos.MANIANA;
-		comision = new Comision(1, materia, cicloElectivo, turno);
+		comision = new Comision(1, materia, cicloLectivo, turno);
 
 		Integer id = 1;
 		Integer cantidadAlumnos = 30;
 		aula = new Aula(id, cantidadAlumnos);
 
+		curso = new Curso(1, materia, cicloLectivo, turno, 30);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -76,7 +78,7 @@ public class TestSistemaDeGestionAcademica {
 
 	@Test
 	public void QueSePuedaCrearCicloLectivo() {
-		assertNotNull(cicloElectivo);
+		assertNotNull(cicloLectivo);
 	}
 
 	@Test
@@ -126,7 +128,7 @@ public class TestSistemaDeGestionAcademica {
 
 	@Test
 	public void QueSePuedaAgregarUnCicloLectivo() {
-		universidad.agregarCicloLectivo(cicloElectivo);
+		universidad.agregarCicloLectivo(cicloLectivo);
 
 		Integer valorEsperado = 1;
 		Integer valorObtenido = universidad.obtenerCantidadDeCiclosLectivos();
@@ -170,18 +172,16 @@ public class TestSistemaDeGestionAcademica {
 
 		universidad.agregarMateriaCorrelativa(1, 2);
 		universidad.agregarMateriaCorrelativa(2, 3);
-		
-		
-	    // Verificar que las materias correlativas se han agregado correctamente
-        assertTrue(materia1.getMateriasCorrelativas().contains(materia2));
-        assertTrue(materia2.getMateriasCorrelativas().contains(materia1));
-        assertTrue(materia2.getMateriasCorrelativas().contains(materia3));
-        assertTrue(materia3.getMateriasCorrelativas().contains(materia2));
- 
-       
+
+		// Verificar que las materias correlativas se han agregado correctamente
+		assertTrue(materia1.getMateriasCorrelativas().contains(materia2));
+		assertTrue(materia2.getMateriasCorrelativas().contains(materia1));
+		assertTrue(materia2.getMateriasCorrelativas().contains(materia3));
+		assertTrue(materia3.getMateriasCorrelativas().contains(materia2));
+
 	}
- // -----------------------------------------------------------------------------------------
-	
+	// -----------------------------------------------------------------------------------------
+
 	@Test
 	public void QueSePuedaEliminarMateriaCorrelativa() {
 		Materia materia1 = new Materia(1, "MAT1");
@@ -194,27 +194,34 @@ public class TestSistemaDeGestionAcademica {
 
 		universidad.agregarMateriaCorrelativa(1, 2);
 		universidad.agregarMateriaCorrelativa(2, 3);
-		
-		
-	    // Verificar que las materias correlativas se han agregado correctamente
-        assertTrue(materia1.getMateriasCorrelativas().contains(materia2));
-        assertTrue(materia2.getMateriasCorrelativas().contains(materia1));
-        assertTrue(materia2.getMateriasCorrelativas().contains(materia3));
-        assertTrue(materia3.getMateriasCorrelativas().contains(materia2));
- 
-        // Eliminar la correlativa
-        universidad.eliminarCorrelativa(1, 2);
 
-        // Verificar que la correlativa se haya eliminado correctamente
-        assertFalse(materia1.getMateriasCorrelativas().contains(materia2));
-        assertFalse(materia2.getMateriasCorrelativas().contains(materia1));
-        
-        
+		// Verificar que las materias correlativas se han agregado correctamente
+		assertTrue(materia1.getMateriasCorrelativas().contains(materia2));
+		assertTrue(materia2.getMateriasCorrelativas().contains(materia1));
+		assertTrue(materia2.getMateriasCorrelativas().contains(materia3));
+		assertTrue(materia3.getMateriasCorrelativas().contains(materia2));
+
+		// Eliminar la correlativa
+		universidad.eliminarCorrelativa(1, 2);
+
+		// Verificar que la correlativa se haya eliminado correctamente
+		assertFalse(materia1.getMateriasCorrelativas().contains(materia2));
+		assertFalse(materia2.getMateriasCorrelativas().contains(materia1));
+
 	}
-	//---------------------------------------------------------------------------------------
+
+	// ---------------------------------------------------------------------------------------
 	@Test
 	public void QueSePuedaInscribirAlumnoACurso() {
-		sdf
+		universidad.agregarAlumno(alumno);
+        universidad.agregarCurso(curso);
+        
+     // Verificar que se pueda inscribir al alumno al curso
+        LocalDate fechaInscripcion = LocalDate.of(2023, 8, 15);
+        universidad.inscribirAlumnoACurso(alumno, curso, fechaInscripcion);
+        
+        assertTrue(curso.estaInscrito(alumno));
 	}
-	
+
+	// ----------------------------------------------------------------------------------------
 }

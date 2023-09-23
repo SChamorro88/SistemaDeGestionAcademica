@@ -9,12 +9,30 @@ public class Materia {
 	private int id;
 	private String nombre;
 	private Set<Materia> materiasCorrelativas;
+	public Double nota;
 
 	public Materia(int id, String nombre) {
 		this.id = id;
 		this.nombre = nombre;
 		this.materiasCorrelativas = new HashSet<Materia>();
+		this.nota = nota;
 	}
+	
+	
+	public Double getNota() {
+		return nota;
+	}
+
+
+	public void setNota(Double nota) {
+		this.nota = nota;
+	}
+
+
+	public void setMateriasCorrelativas(Set<Materia> materiasCorrelativas) {
+		this.materiasCorrelativas = materiasCorrelativas;
+	}
+
 
 	public int getId() {
 		return id;

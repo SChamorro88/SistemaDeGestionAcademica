@@ -77,5 +77,9 @@ public class CicloLectivo {
 		CicloLectivo other = (CicloLectivo) obj;
 		return Objects.equals(idCiclo, other.idCiclo);
 	}
+	
+	 public boolean estaEnPeriodoDeInscripcion(LocalDate fecha) {
+	        return !fecha.isBefore(fechaInicioInscripcion) && !fecha.isAfter(fechaFinalizacionInscripcion);
+	    }
 
 }

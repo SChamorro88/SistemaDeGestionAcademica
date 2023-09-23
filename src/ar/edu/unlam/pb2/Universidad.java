@@ -1,5 +1,6 @@
 package ar.edu.unlam.pb2;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ public class Universidad {
 	private Map<Integer, CicloLectivo> cicloElectivos;
 	private List<Comision> comisiones;
 	private List<Aula> aulas;
+	private List<Curso> cursos;
 
 	public Universidad(int id, String nombre) {
 		this.id = id;
@@ -27,6 +29,7 @@ public class Universidad {
 		this.cicloElectivos = new HashMap<Integer, CicloLectivo>();
 		this.comisiones = new ArrayList<Comision>();
 		this.aulas = new ArrayList<Aula>();
+		this.cursos = new ArrayList<Curso>();
 	}
 
 	public int getId() {
@@ -159,6 +162,49 @@ public class Universidad {
 			materiaPrincipal.eliminarMateriaCorrelativa(materiaCorrelativa);
 			materiaCorrelativa.eliminarMateriaCorrelativa(materiaPrincipal);
 		}
+	}
+	// -----------------------------------------------------------------------------------------------
+
+	public void inscribirAlumnoACurso(Alumno alumno, Curso curso, LocalDate fechaInscripcion) {
+		// Verificar que el alumno y el curso estén dados de alta
+		if (!alumnos.contains(alumno) || !cursos.contains(curso)) {
+			throw new IllegalArgumentException("Error: El alumno y/o el curso no están dados de alta.");
+		}
+		// Verificar que el alumno tenga al menos cursadas todas las correlativas con
+		// nota >= 4
+		for (Materia correlativa : curso.getMateria().getMateriasCorrelativas()) {
+			if (!alumno.tieneCorrelativaAprobada(correlativa)) {
+				throw new IllegalArgumentException("Error: El alumno no cumple con todas las correlativas necesarias.");
+
+			}
+		}
+		// Verificar que la inscripción esté dentro del período permitido
+		if (!curso.getCicloLectivo().estaEnPeriodoDeInscripcion(fechaInscripcion)) {
+			throw new IllegalArgumentException("Error: La inscripción no está dentro del período permitido.");
+
+		}
+		// Verificar que no se exceda el cupo máximo del curso
+		if (curso.getCupoActual() >= curso.getCupoMaximo()) {
+			throw new IllegalArgumentException("Error: El curso ha alcanzado su cupo máximo de alumnos.");
+
+		}
+		// Verificar si el alumno ya está inscrito en otro curso para el mismo día y
+		// turno
+		if (alumno.estaInscritoEnOtroCurso(curso)) {
+			throw new IllegalArgumentException(
+					"Error: El alumno ya está inscrito en otro curso para el mismo día y turno.");
+
+		}
+
+		// Realizar la inscripción
+		alumno.inscribirseACurso(curso);
+		curso.agregarAlumnoInscrito(alumno);
+
+	}
+
+	public void agregarCurso(Curso curso) {
+		cursos.add(curso);
+
 	}
 
 }
