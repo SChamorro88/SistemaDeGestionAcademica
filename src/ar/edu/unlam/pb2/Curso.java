@@ -16,7 +16,8 @@ public class Curso {
 	private Set<Materia> correlativasRequeridas;
 	private Materia materia;
 	private CicloLectivo cicloLectivo;
-	
+	private Set<Docente> docentesAsignados;
+
 	public Curso(Integer id, LocalDate fechaCurso, Turnos turno, int cupoMaximo) {
 		this.id = id;
 		this.fechaCurso = fechaCurso;
@@ -27,6 +28,7 @@ public class Curso {
 		this.cupoMaximo = cupoMaximo;
 		this.alumnosInscritos = new ArrayList<Alumno>();
 		this.correlativasRequeridas = new HashSet<Materia>();
+		this.docentesAsignados = new HashSet<Docente>();
 	}
 
 	public Curso(int id, Materia materia, CicloLectivo cicloLectivo, Turnos turno, Integer cupoMaximo) {
@@ -38,11 +40,9 @@ public class Curso {
 		this.cupoActual = 0;
 		this.alumnosInscritos = new ArrayList<Alumno>();
 		this.correlativasRequeridas = new HashSet<Materia>();
+		this.docentesAsignados = new HashSet<Docente>();
 	}
-	
-	
-	
-	
+
 	public Integer getCupoActual() {
 		return cupoActual;
 	}
@@ -127,22 +127,41 @@ public class Curso {
 		this.cupoMaximo = cupoMaximo;
 	}
 
-		public void agregarAlumnoInscrito(Alumno alumno) {
+	public void agregarAlumnoInscrito(Alumno alumno) {
 		if (alumno != null) {
 			if (cupoActual < cupoMaximo) {
 				alumnosInscritos.add(alumno);
 				cupoActual++;
 			}
 		}
-	
-		
+
 	}
 
 	public boolean estaInscrito(Alumno alumno) {
-		
+
 		return alumnosInscritos.contains(alumno);
 	}
 	
+	public void asignarDocente(Docente docente) {
+		if (docente != null) {
+			Integer numeroDocentes = docentesAsignados.size();
+			Integer alumnosIncritos = cupoActual;
+			
+			int docentesNecesarios = (alumnosIncritos / 20) + 1;
+			
+			if (numeroDocentes < docentesNecesarios) {
+				docentesAsignados.add(docente);
+				docente.asignarCurso(this);
+			}
+			
+		}
+	}
 	
+	public boolean tieneProfesor(Docente docente) {
+		return docentesAsignados.contains(docente);
+	}
 
+	 public void incrementarCupoActual() {
+	        cupoActual++;
+	    }
 }

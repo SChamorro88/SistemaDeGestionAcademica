@@ -199,6 +199,7 @@ public class Universidad {
 		// Realizar la inscripción
 		alumno.inscribirseACurso(curso);
 		curso.agregarAlumnoInscrito(alumno);
+		curso.incrementarCupoActual();
 
 	}
 

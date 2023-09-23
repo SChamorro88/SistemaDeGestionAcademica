@@ -224,4 +224,15 @@ public class TestSistemaDeGestionAcademica {
 	}
 
 	// ----------------------------------------------------------------------------------------
+	
+	@Test
+	public void queSePuedaAsignarProfesoresALCurso() {
+		curso.asignarDocente(docente);
+		
+		assertTrue(curso.tieneProfesor(docente));
+		
+		assertTrue(docente.tieneCurso(curso));
+	}
+	
+	
 }
