@@ -13,6 +13,7 @@ public class Universidad {
 
 	private int id;
 	private String nombre;
+	private Curso curso;
 	private Map<Integer, Materia> materiasDisponibles;
 	private Set<Alumno> alumnos;
 	private Set<Docente> docentes;
@@ -21,7 +22,6 @@ public class Universidad {
 	private List<Aula> aulas;
 	private List<Curso> cursos;
 	private Map<String, Map<String, Integer>> notasPorAlumnoYCurso;
-	private Curso curso;
 
 	public Universidad(int id, String nombre) {
 		this.id = id;
@@ -314,7 +314,7 @@ public class Universidad {
 		Alumno alumno = buscarAlumnoPorId(idAlumno);
 
 		if (alumno == null) {
-			return null; // Retornar null si no se encuentra el alumno
+			throw new IllegalArgumentException("No existe este alumno");
 		}
 
 		// Obtener la lista de materias aprobadas para el alumno
@@ -361,11 +361,14 @@ public class Universidad {
 		Materia materia = curso.getMateria();
 		List<Alumno> alumnos = curso.getAlumnosInscritos();
 
+		
+		//StringBuilder para manipular la cadena de caracteres dinamica que conforman el reporte
 		StringBuilder reporte = new StringBuilder();
 		reporte.append("ID del Curso: ").append(idCurso).append("\n");
 		reporte.append("Materia: ").append(materia.getNombre()).append("\n");
 		reporte.append("Dni\tNombre\tApellido\tNota\n");
 
+		//itera a los alumnos
 		for (Alumno alumno : alumnos) {
 			Double nota = alumno.obtenerNotaEnMateria(materia);
 			// Agregar la información del alumno y su nota al reporte

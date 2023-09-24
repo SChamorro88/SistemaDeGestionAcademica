@@ -1,7 +1,6 @@
 package ar.edu.unlam.pb2;
 
 public class Comision {
-	
 
 	private int id;
 	private Materia materia;
@@ -46,5 +45,5 @@ public class Comision {
 	public void setTurno(Turnos turno) {
 		this.turno = turno;
 	}
-	
+
 }

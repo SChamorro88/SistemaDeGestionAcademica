@@ -18,17 +18,39 @@ public class Materia {
 		this.id = id;
 		this.nombre = nombre;
 		this.materiasCorrelativas = new HashSet<Materia>();
-		this.nota = nota;
+
 		this.cursosAsociadosAMateria = new HashSet<Curso>();
+
+	}
+
+	// -----------------------------------------------------------------------------------------------
+
+	public CicloLectivo getCicloLectivo() {
+		return cicloLectivo;
+	}
+
+	public Double getNotaMateria() {
+		return notaMateria;
+	}
+
+	public void setNotaMateria(Double notaMateria) {
+		this.notaMateria = notaMateria;
+	}
+
+	public Nota getNota() {
+		return nota;
+	}
+
+	public void setNota(Nota nota) {
+		this.nota = nota;
+	}
+
+	public void setCicloLectivo(CicloLectivo cicloLectivo) {
 		this.cicloLectivo = cicloLectivo;
 	}
 
 	public Double getnotaMateria() {
 		return notaMateria;
-	}
-
-	public void setnotaMateria(Double nota) {
-		this.notaMateria = notaMateria;
 	}
 
 	public void setMateriasCorrelativas(Set<Materia> materiasCorrelativas) {
@@ -51,6 +73,19 @@ public class Materia {
 		this.nombre = nombre;
 	}
 
+	public Set<Materia> getMateriasCorrelativas() {
+		return materiasCorrelativas;
+	}
+
+	public Set<Curso> getCursosAsociadosAMateria() {
+		return cursosAsociadosAMateria;
+	}
+
+	public void setCursosAsociadosAMateria(Set<Curso> cursosAsociadosAMateria) {
+		this.cursosAsociadosAMateria = cursosAsociadosAMateria;
+	}
+
+	// --------------------------------------------------------------------------------------
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -68,10 +103,7 @@ public class Materia {
 		return id == other.id;
 	}
 
-	public Set<Materia> getMateriasCorrelativas() {
-		return materiasCorrelativas;
-	}
-
+	// --------------------------------------------------------------------------------------
 	public void agregarMateriaCorrelativa(Materia materiaCorrelativa) {
 		materiasCorrelativas.add(materiaCorrelativa);
 
@@ -87,14 +119,6 @@ public class Materia {
 
 	}
 
-	public Set<Curso> getCursosAsociadosAMateria() {
-		return cursosAsociadosAMateria;
-	}
-
-	public void setCursosAsociadosAMateria(Set<Curso> cursosAsociadosAMateria) {
-		this.cursosAsociadosAMateria = cursosAsociadosAMateria;
-	}
-
 	public boolean tieneCorrelativasAprobadas(Alumno alumno) {
 		for (Materia correlativa : materiasCorrelativas) {
 			if (!alumno.tieneCorrelativaAprobada(correlativa)) {
@@ -105,25 +129,18 @@ public class Materia {
 	}
 
 	public boolean estaAprobada() {
-        // La lógica para determinar si la nota está aprobada es que el valor debe ser mayor o igual a 7
-        // y todas las correlativas deben estar aprobadas con una nota mayor o igual a 7
-        if (nota.getValor()>= 7) {
-            for (Materia correlativa : materiasCorrelativas) {
-                if (correlativa.getnotaMateria() < 7) {
-                    return false; 
-                }
-            }
-            return true;
-        }
-        return false; 
-    }
-
-	public CicloLectivo getCicloLectivo() {
-		return cicloLectivo;
-	}
-
-	public void setCicloLectivo(CicloLectivo cicloLectivo) {
-		this.cicloLectivo = cicloLectivo;
+		// La lógica para determinar si la nota está aprobada es que el valor debe ser
+		// mayor o igual a 7
+		// y todas las correlativas deben estar aprobadas con una nota mayor o igual a 7
+		if (nota.getValor() >= 7) {
+			for (Materia correlativa : materiasCorrelativas) {
+				if (correlativa.getnotaMateria() < 7) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 }

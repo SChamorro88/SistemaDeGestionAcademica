@@ -112,6 +112,30 @@ public class Alumno {
 		this.dni = dni;
 	}
 
+	public Set<Materia> getMateriasAprobadas() {
+		return materiasAprobadas;
+	}
+
+	public void setMateriasAprobadas(Set<Materia> materiasAprobadas) {
+		this.materiasAprobadas = materiasAprobadas;
+	}
+
+	public List<Curso> getCursosInscritos() {
+		return cursosInscritos;
+	}
+
+	public void setCursosInscritos(List<Curso> cursosInscritos) {
+		this.cursosInscritos = cursosInscritos;
+	}
+
+	public List<Nota> getNotasRegistradas() {
+		return notasRegistradas;
+	}
+
+	public void setNotasRegistradas(List<Nota> notasRegistradas) {
+		this.notasRegistradas = notasRegistradas;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(dni);
@@ -128,7 +152,7 @@ public class Alumno {
 		Alumno other = (Alumno) obj;
 		return Objects.equals(dni, other.dni);
 	}
-
+	// -----------------------------------------------------------------------------------------------------
 	public boolean tieneCorrelativaAprobada(Materia correlativa) {
 		for (Materia materiaAprobada : materiasAprobadas) {
 			if (materiaAprobada.equals(correlativa) && materiaAprobada.getnotaMateria() >= 4) {
@@ -168,30 +192,6 @@ public class Alumno {
 	public void registrarNota(Nota nota) {
 		notasRegistradas.add(nota);
 
-	}
-
-	public Set<Materia> getMateriasAprobadas() {
-		return materiasAprobadas;
-	}
-
-	public void setMateriasAprobadas(Set<Materia> materiasAprobadas) {
-		this.materiasAprobadas = materiasAprobadas;
-	}
-
-	public List<Curso> getCursosInscritos() {
-		return cursosInscritos;
-	}
-
-	public void setCursosInscritos(List<Curso> cursosInscritos) {
-		this.cursosInscritos = cursosInscritos;
-	}
-
-	public List<Nota> getNotasRegistradas() {
-		return notasRegistradas;
-	}
-
-	public void setNotasRegistradas(List<Nota> notasRegistradas) {
-		this.notasRegistradas = notasRegistradas;
 	}
 
 	public void aprobarMateria(Materia fisica) {

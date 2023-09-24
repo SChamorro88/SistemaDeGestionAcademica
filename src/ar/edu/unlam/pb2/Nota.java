@@ -35,6 +35,5 @@ public class Nota {
 	public void setValor(Integer valor) {
 		this.valor = valor;
 	}
-	
-	
+
 }

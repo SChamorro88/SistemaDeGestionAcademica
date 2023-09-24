@@ -25,7 +25,5 @@ public class Aula {
 	public void setCantidadAlumnos(Integer cantidadAlumnos) {
 		this.cantidadAlumnos = cantidadAlumnos;
 	}
-	
-	
 
 }

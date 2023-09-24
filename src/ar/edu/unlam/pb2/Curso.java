@@ -13,25 +13,25 @@ public class Curso {
 	private Turnos turno;
 	private Integer cupoMaximo;
 	private Integer cupoActual;
-	private List<Alumno> alumnosInscritos;
-	private Set<Materia> correlativasRequeridas;
 	private Materia materia;
 	private CicloLectivo cicloLectivo;
 	private Set<Docente> docentesAsignados;
 	private List<Materia> materiasAsociadas;
+	private List<Alumno> alumnosInscritos;
+	private Set<Materia> correlativasRequeridas;
 
 	public Curso(Integer id, LocalDate fechaCurso, Turnos turno, int cupoMaximo) {
 		this.id = id;
 		this.fechaCurso = fechaCurso;
 		this.turno = turno;
 		this.cupoMaximo = cupoMaximo;
-		this.alumnosInscritos = new ArrayList<>();
-		this.correlativasRequeridas = new HashSet<>();
 		this.cupoMaximo = cupoMaximo;
 		this.alumnosInscritos = new ArrayList<Alumno>();
 		this.correlativasRequeridas = new HashSet<Materia>();
 		this.docentesAsignados = new HashSet<Docente>();
 		this.materiasAsociadas = new ArrayList<Materia>();
+		this.alumnosInscritos = new ArrayList<>();
+		this.correlativasRequeridas = new HashSet<>();
 	}
 
 	public Curso(int id, Materia materia, CicloLectivo cicloLectivo, Turnos turno, Integer cupoMaximo) {
@@ -95,10 +95,6 @@ public class Curso {
 		this.alumnosInscritos = alumnosInscritos;
 	}
 
-	public void agregarCorrelativa(Materia correlativa) {
-		correlativasRequeridas.add(correlativa);
-	}
-
 	public Set<Materia> getCorrelativas() {
 		return correlativasRequeridas;
 	}
@@ -129,6 +125,34 @@ public class Curso {
 
 	public void setCupoMaximo(Integer cupoMaximo) {
 		this.cupoMaximo = cupoMaximo;
+	}
+
+	// ----------------------------------------------------------------------
+
+	public Set<Docente> getDocentesAsignados() {
+		return docentesAsignados;
+	}
+
+	public void setDocentesAsignados(Set<Docente> docentesAsignados) {
+		this.docentesAsignados = docentesAsignados;
+	}
+
+	public List<Materia> getMateriasAsociadas() {
+		return materiasAsociadas;
+	}
+
+	public void setMateriasAsociadas(List<Materia> materiasAsociadas) {
+		this.materiasAsociadas = materiasAsociadas;
+	}
+
+	// -----------------------------------------------------------------------------------
+	public void asociarMateriaACurso(Materia materia) {
+		materiasAsociadas.add(materia);
+
+	}
+
+	public void agregarCorrelativa(Materia correlativa) {
+		correlativasRequeridas.add(correlativa);
 	}
 
 	public void agregarAlumnoInscrito(Alumno alumno) {
@@ -182,7 +206,8 @@ public class Curso {
 		// 2- verificar notas mayores o iguales a 7 y correlativas aprobadas
 		if (nota.getValor() >= 7) {
 			if (!materia.tieneCorrelativasAprobadas(alumno)) {
-				throw new IllegalArgumentException("No puedes asignar una nota mayor o igual a 7 si no están todas las correlativas aprobadas");
+				throw new IllegalArgumentException(
+						"No puedes asignar una nota mayor o igual a 7 si no están todas las correlativas aprobadas");
 
 			}
 		}
@@ -190,7 +215,7 @@ public class Curso {
 		if (!validarTiposNotas(id_alumno, nota.getTipo())) {
 			throw new IllegalArgumentException("No puedes cargar 2 notas del mismo tipo o más de 3 tipos de notas");
 		}
-		
+
 		alumno.registrarNota(nota);
 	}
 
@@ -223,28 +248,6 @@ public class Curso {
 			}
 		}
 		throw new IllegalArgumentException("No existe el id del alumno");
-	}
-
-	// ----------------------------------------------------------------------
-	public void asociarMateriaACurso(Materia materia) {
-		materiasAsociadas.add(materia);
-
-	}
-
-	public Set<Docente> getDocentesAsignados() {
-		return docentesAsignados;
-	}
-
-	public void setDocentesAsignados(Set<Docente> docentesAsignados) {
-		this.docentesAsignados = docentesAsignados;
-	}
-
-	public List<Materia> getMateriasAsociadas() {
-		return materiasAsociadas;
-	}
-
-	public void setMateriasAsociadas(List<Materia> materiasAsociadas) {
-		this.materiasAsociadas = materiasAsociadas;
 	}
 
 }
