@@ -19,6 +19,8 @@ public class Universidad {
 	private List<Comision> comisiones;
 	private List<Aula> aulas;
 	private List<Curso> cursos;
+	private Map<String, Map<String, Integer>> notasPorAlumnoYCurso;
+	private Curso curso;
 
 	public Universidad(int id, String nombre) {
 		this.id = id;
@@ -30,6 +32,7 @@ public class Universidad {
 		this.comisiones = new ArrayList<Comision>();
 		this.aulas = new ArrayList<Aula>();
 		this.cursos = new ArrayList<Curso>();
+		this.notasPorAlumnoYCurso = new HashMap<>();
 	}
 
 	public int getId() {
@@ -205,6 +208,48 @@ public class Universidad {
 
 	public void agregarCurso(Curso curso) {
 		cursos.add(curso);
+
+	}
+
+	public void asignarCursoAMateria(Curso curso, Materia materia) {
+		if (curso != null && materia != null) {
+			materia.asociarCursoAMateria(curso);
+		} else {
+			throw new IllegalArgumentException("El curso o la materia son nulos.");
+		}
+	}
+
+	public void asignarMateriaACurso(Curso curso, Materia materia) {
+		if (curso != null && materia != null) {
+			curso.asociarMateriaACurso(materia);
+		} else {
+			throw new IllegalArgumentException("El curso o la materia son nulos.");
+		}
+	}
+
+	public Set<Materia> obtenerListadoMateriasAprobadasParaUnAlumno(int idAlumno) {
+		// Buscar al alumno por su ID (debe implementarse una lógica para encontrar al
+		// alumno)
+		Alumno alumno = buscarAlumnoPorId(idAlumno);
+
+		if (alumno == null) {
+			return null; // Retornar null si no se encuentra el alumno
+		}
+
+		// Obtener la lista de materias aprobadas para el alumno
+		Set<Materia> materiasAprobadas = alumno.getMateriasAprobadas();
+
+		// Filtrar las materias aprobadas y devolver la lista resultante
+		return materiasAprobadas;
+	}
+
+	private Alumno buscarAlumnoPorId(int idAlumno) {
+		for (Alumno alumno : alumnos) {
+			if (alumno.getId() == idAlumno) {
+				return alumno;
+			}
+		}
+		throw new IllegalArgumentException("no existe alumno");
 
 	}
 

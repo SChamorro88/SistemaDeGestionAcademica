@@ -1,11 +1,17 @@
 package ar.edu.unlam.pb2;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +47,7 @@ public class TestSistemaDeGestionAcademica {
 		LocalDate fechaInicioCicloElectivo = LocalDate.of(2024, 7, 31);
 		LocalDate fechaFinalizacionCicloElectivo = LocalDate.of(2024, 7, 31);
 		LocalDate fechaInicioInscripcion = LocalDate.of(2023, 8, 1);
-		LocalDate fechaFinalizacionInscripcion =  LocalDate.of(2023, 8, 31);
+		LocalDate fechaFinalizacionInscripcion = LocalDate.of(2023, 8, 31);
 		cicloLectivo = new CicloLectivo(idCiclo, fechaInicioCicloElectivo, fechaFinalizacionCicloElectivo,
 				fechaInicioInscripcion, fechaFinalizacionInscripcion);
 
@@ -214,25 +220,90 @@ public class TestSistemaDeGestionAcademica {
 	@Test
 	public void QueSePuedaInscribirAlumnoACurso() {
 		universidad.agregarAlumno(alumno);
-        universidad.agregarCurso(curso);
-        
-     // Verificar que se pueda inscribir al alumno al curso
-        LocalDate fechaInscripcion = LocalDate.of(2023, 8, 15);
-        universidad.inscribirAlumnoACurso(alumno, curso, fechaInscripcion);
-        
-        assertTrue(curso.estaInscrito(alumno));
+		universidad.agregarCurso(curso);
+
+		// Verificar que se pueda inscribir al alumno al curso
+		LocalDate fechaInscripcion = LocalDate.of(2023, 8, 15);
+		universidad.inscribirAlumnoACurso(alumno, curso, fechaInscripcion);
+
+		assertTrue(curso.estaInscrito(alumno));
 	}
 
 	// ----------------------------------------------------------------------------------------
-	
+
 	@Test
 	public void queSePuedaAsignarProfesoresALCurso() {
 		curso.asignarDocente(docente);
-		
+
 		assertTrue(curso.tieneProfesor(docente));
-		
+
 		assertTrue(docente.tieneCurso(curso));
 	}
-	
-	
+
+	// ----------------------------------------------------------------------------------------
+
+	@Test
+	public void queSePuedaRegistrarUnaNotaDeUnAlumno() {
+		Alumno alumno = new Alumno(1, 12345233, "Juan", "Perez", LocalDate.of(1990, 1, 1), LocalDate.now());
+		Materia materia = new Materia(1, "Matemáticas");
+		CicloLectivo cicloLectivo = new CicloLectivo(1, LocalDate.now(), LocalDate.now(), LocalDate.now(),
+				LocalDate.now());
+		Comision comision = new Comision(1, materia, cicloLectivo, Turnos.MANIANA);
+		Aula aula = new Aula(1, 30);
+
+		Materia fisica = new Materia(2, "Física");
+		universidad.agregarMateria(materia);
+		universidad.agregarMateria(fisica);
+		universidad.agregarMateriaCorrelativa(1, 2);
+
+		universidad.agregarAlumno(alumno);
+		universidad.agregarCurso(curso);
+
+		alumno.inscribirseACurso(curso);
+		alumno.aprobarMateria(fisica);
+
+		LocalDate fechaInscripcion = LocalDate.of(2023, 8, 15);
+		universidad.inscribirAlumnoACurso(alumno, curso, fechaInscripcion);
+		// Crear una nota válida
+		Nota nota = new Nota("1erParc", 6, fisica);
+		curso.registrarNota(curso.getId(), alumno.getId(), nota);
+
+		assertTrue(alumno.getNotasRegistradas().contains(nota));
+
+	}
+
+	@Test
+	public void queSePuedoObtenerListadoMateriasAprobadasParaUnAlumno() {
+		Materia matematica = new Materia(1, "Matematicas");
+		Materia fisica = new Materia(2, "Fisica");
+
+		universidad.agregarMateria(matematica);
+		universidad.agregarMateria(fisica);
+		universidad.agregarMateriaCorrelativa(1, 2);
+
+		universidad.agregarAlumno(alumno);
+		universidad.agregarCurso(curso);
+		
+		alumno.aprobarMateria(matematica);
+		alumno.aprobarMateria(fisica);
+
+		LocalDate fechaInscripcion = LocalDate.of(2023, 8, 15);
+		universidad.inscribirAlumnoACurso(alumno, curso, fechaInscripcion);
+
+		// Llamar al método para obtener las materias aprobadas para el alumno con ID 1
+		Set<Materia> materiasAprobadas = universidad.obtenerListadoMateriasAprobadasParaUnAlumno(1);
+		// Lista de nombres de materias esperadas
+		List<String> nombresMateriasEsperadas = Arrays.asList("Matematicas", "Fisica");
+
+		// Convertir las listas a arrays y verificar que sean iguales
+
+		String[] aprobadasArray = materiasAprobadas.stream().map(Materia::getNombre).toArray(String[]::new);
+		String[] esperadasArray = nombresMateriasEsperadas.toArray(new String[0]);
+
+		assertEquals(2, materiasAprobadas.size());
+
+		assertArrayEquals(esperadasArray, aprobadasArray);
+
+	}
+
 }

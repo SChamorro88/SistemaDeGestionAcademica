@@ -2,11 +2,13 @@ package ar.edu.unlam.pb2;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Alumno {
 
@@ -18,6 +20,7 @@ public class Alumno {
 	private Integer dni;
 	private Set<Materia> materiasAprobadas;
 	private List<Curso> cursosInscritos;
+	private List<Nota> notasRegistradas;
 
 	public Alumno(int id, Integer dni, String nombre, String apellido, LocalDate fechaNacimiento,
 			LocalDate fechaIngreso) {
@@ -29,6 +32,7 @@ public class Alumno {
 		this.dni = dni;
 		this.materiasAprobadas = new HashSet<>();
 		this.cursosInscritos = new ArrayList<Curso>();
+		this.notasRegistradas = new ArrayList<Nota>();
 
 	}
 
@@ -99,7 +103,7 @@ public class Alumno {
 
 	public boolean tieneCorrelativaAprobada(Materia correlativa) {
 		for (Materia materiaAprobada : materiasAprobadas) {
-			if (materiaAprobada.equals(correlativa) && materiaAprobada.getNota() >= 4) {
+			if (materiaAprobada.equals(correlativa) && materiaAprobada.getnotaMateria() >= 4) {
 				return true;
 			}
 		}
@@ -127,5 +131,45 @@ public class Alumno {
 		}
 
 	}
+
+	public boolean existeNotaDelMismoTipo(Nota nota) {
+		// Verifica que ya existen una nota del mismo tipo en las notas registradas
+		return notasRegistradas.stream().anyMatch(n -> n.getTipo().equals(nota.getTipo()));
+	}
+
+	public void registrarNota(Nota nota) {
+		notasRegistradas.add(nota);
+
+	}
+
+	public Set<Materia> getMateriasAprobadas() {
+		return materiasAprobadas;
+	}
+
+	public void setMateriasAprobadas(Set<Materia> materiasAprobadas) {
+		this.materiasAprobadas = materiasAprobadas;
+	}
+
+	public List<Curso> getCursosInscritos() {
+		return cursosInscritos;
+	}
+
+	public void setCursosInscritos(List<Curso> cursosInscritos) {
+		this.cursosInscritos = cursosInscritos;
+	}
+
+	public List<Nota> getNotasRegistradas() {
+		return notasRegistradas;
+	}
+
+	public void setNotasRegistradas(List<Nota> notasRegistradas) {
+		this.notasRegistradas = notasRegistradas;
+	}
+
+	public void aprobarMateria(Materia fisica) {
+		materiasAprobadas.add(fisica);
+
+	}
+
 
 }

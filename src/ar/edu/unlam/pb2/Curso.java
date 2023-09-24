@@ -3,6 +3,7 @@ package ar.edu.unlam.pb2;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ public class Curso {
 	private Materia materia;
 	private CicloLectivo cicloLectivo;
 	private Set<Docente> docentesAsignados;
+	private List<Materia> materiasAsociadas;
 
 	public Curso(Integer id, LocalDate fechaCurso, Turnos turno, int cupoMaximo) {
 		this.id = id;
@@ -29,6 +31,7 @@ public class Curso {
 		this.alumnosInscritos = new ArrayList<Alumno>();
 		this.correlativasRequeridas = new HashSet<Materia>();
 		this.docentesAsignados = new HashSet<Docente>();
+		this.materiasAsociadas = new ArrayList<Materia>();
 	}
 
 	public Curso(int id, Materia materia, CicloLectivo cicloLectivo, Turnos turno, Integer cupoMaximo) {
@@ -41,6 +44,7 @@ public class Curso {
 		this.alumnosInscritos = new ArrayList<Alumno>();
 		this.correlativasRequeridas = new HashSet<Materia>();
 		this.docentesAsignados = new HashSet<Docente>();
+		this.materiasAsociadas = new ArrayList<Materia>();
 	}
 
 	public Integer getCupoActual() {
@@ -141,27 +145,106 @@ public class Curso {
 
 		return alumnosInscritos.contains(alumno);
 	}
-	
+
 	public void asignarDocente(Docente docente) {
 		if (docente != null) {
 			Integer numeroDocentes = docentesAsignados.size();
 			Integer alumnosIncritos = cupoActual;
-			
+
 			int docentesNecesarios = (alumnosIncritos / 20) + 1;
-			
+
 			if (numeroDocentes < docentesNecesarios) {
 				docentesAsignados.add(docente);
 				docente.asignarCurso(this);
 			}
-			
+
 		}
 	}
-	
+
 	public boolean tieneProfesor(Docente docente) {
 		return docentesAsignados.contains(docente);
 	}
 
-	 public void incrementarCupoActual() {
-	        cupoActual++;
-	    }
+	public void incrementarCupoActual() {
+		cupoActual++;
+	}
+
+	// ---------------------------------------------------------------------
+
+	public void registrarNota(Integer id_curso, Integer id_alumno, Nota nota) {
+		Alumno alumno = buscarAlumnoPorId(id_alumno);
+
+		// 1-verificar el rango de las notas
+		if (nota.getValor() < 1 || nota.getValor() > 10) {
+			throw new IllegalArgumentException("La nota debe estar entre 1 y 10");
+		}
+
+		// 2- verificar notas mayores o iguales a 7 y correlativas aprobadas
+		if (nota.getValor() >= 7) {
+			if (!materia.tieneCorrelativasAprobadas(alumno)) {
+				throw new IllegalArgumentException("No puedes asignar una nota mayor o igual a 7 si no están todas las correlativas aprobadas");
+
+			}
+		}
+		// 3- Validar cantidad de tipos de notas y que no haya duplicados
+		if (!validarTiposNotas(id_alumno, nota.getTipo())) {
+			throw new IllegalArgumentException("No puedes cargar 2 notas del mismo tipo o más de 3 tipos de notas");
+		}
+		
+		alumno.registrarNota(nota);
+	}
+
+	private boolean validarTiposNotas(Integer id_alumno, String tipo) {
+		Alumno alumno = buscarAlumnoPorId(id_alumno);
+		Integer contadorTipoDeNotas = 0;
+		Integer contadorMismoTipoDeNotas = 0;
+		for (Nota nota : alumno.getNotasRegistradas()) {
+			if (nota.getTipo().equals(tipo)) {
+				contadorMismoTipoDeNotas++;
+
+				if (contadorMismoTipoDeNotas >= 2) {
+					return false;
+				}
+			}
+			if (contadorTipoDeNotas >= 3) {
+				return false;
+			}
+			if (!nota.getTipo().equals(tipo)) {
+				contadorTipoDeNotas++;
+			}
+		}
+		return true;
+	}
+
+	public Alumno buscarAlumnoPorId(Integer id_alumno) {
+		for (Alumno alumno : alumnosInscritos) {
+			if (alumno.getId() == id_alumno) {
+				return alumno;
+			}
+		}
+		throw new IllegalArgumentException("No existe el id del alumno");
+	}
+
+	// ----------------------------------------------------------------------
+	public void asociarMateriaACurso(Materia materia) {
+		materiasAsociadas.add(materia);
+
+	}
+
+	public Set<Docente> getDocentesAsignados() {
+		return docentesAsignados;
+	}
+
+	public void setDocentesAsignados(Set<Docente> docentesAsignados) {
+		this.docentesAsignados = docentesAsignados;
+	}
+
+	public List<Materia> getMateriasAsociadas() {
+		return materiasAsociadas;
+	}
+
+	public void setMateriasAsociadas(List<Materia> materiasAsociadas) {
+		this.materiasAsociadas = materiasAsociadas;
+	}
+
 }
