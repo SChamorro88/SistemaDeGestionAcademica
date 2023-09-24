@@ -21,6 +21,7 @@ public class Alumno {
 	private Set<Materia> materiasAprobadas;
 	private List<Curso> cursosInscritos;
 	private List<Nota> notasRegistradas;
+	private List<Materia> materiasCursadas;
 
 	public Alumno(int id, Integer dni, String nombre, String apellido, LocalDate fechaNacimiento,
 			LocalDate fechaIngreso) {
@@ -33,8 +34,20 @@ public class Alumno {
 		this.materiasAprobadas = new HashSet<>();
 		this.cursosInscritos = new ArrayList<Curso>();
 		this.notasRegistradas = new ArrayList<Nota>();
+		this.materiasCursadas = new ArrayList<Materia>();
 
 	}
+	
+
+	public List<Materia> getMateriasCursadas() {
+		return materiasCursadas;
+	}
+
+
+	public void setMateriasCursadas(List<Materia> materiasCursadas) {
+		this.materiasCursadas = materiasCursadas;
+	}
+
 
 	public int getId() {
 		return id;
@@ -171,5 +184,7 @@ public class Alumno {
 
 	}
 
-
+	public void agregarMateriaCursada(Materia materia) {
+		materiasCursadas.add(materia);
+	}
 }

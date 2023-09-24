@@ -283,7 +283,7 @@ public class TestSistemaDeGestionAcademica {
 
 		universidad.agregarAlumno(alumno);
 		universidad.agregarCurso(curso);
-		
+
 		alumno.aprobarMateria(matematica);
 		alumno.aprobarMateria(fisica);
 
@@ -305,5 +305,25 @@ public class TestSistemaDeGestionAcademica {
 		assertArrayEquals(esperadasArray, aprobadasArray);
 
 	}
+
+	@Test
+	public void testObtenerMateriasQueFaltanCursarParaUnAlumno() {
+		Materia matematicas = new Materia(1, "Matemáticas");
+		Materia fisica = new Materia(2, "Física");
+
+		alumno.agregarMateriaCursada(matematicas);
+		alumno.agregarMateriaCursada(fisica);
+
+		// Agregar materias disponibles al sistema (usando el ID como clave)
+		universidad.agregarMateria(matematicas);
+		universidad.agregarMateria(fisica);
+		universidad.agregarMateria(new Materia(3, "Química"));
+		
+		universidad.agregarAlumno(alumno);
+		
+		Materia[] materiasFaltanCursar = universidad.obtenerMateriasQueFaltanCursarParaUnAlumno(1);
+		 assertArrayEquals(new Materia[] { new Materia(3, "Química") }, materiasFaltanCursar);
+		
+		}
 
 }

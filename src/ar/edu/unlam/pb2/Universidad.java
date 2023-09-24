@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +13,7 @@ public class Universidad {
 
 	private int id;
 	private String nombre;
-	private Map<Integer, Materia> materias;
+	private Map<Integer, Materia> materiasDisponibles;
 	private Set<Alumno> alumnos;
 	private Set<Docente> docentes;
 	private Map<Integer, CicloLectivo> cicloElectivos;
@@ -25,7 +26,7 @@ public class Universidad {
 	public Universidad(int id, String nombre) {
 		this.id = id;
 		this.nombre = nombre;
-		this.materias = new HashMap<Integer, Materia>();
+		this.materiasDisponibles = new HashMap<Integer, Materia>();
 		this.alumnos = new HashSet<Alumno>();
 		this.docentes = new HashSet<Docente>();
 		this.cicloElectivos = new HashMap<Integer, CicloLectivo>();
@@ -34,6 +35,107 @@ public class Universidad {
 		this.cursos = new ArrayList<Curso>();
 		this.notasPorAlumnoYCurso = new HashMap<>();
 	}
+	
+
+	public Map<Integer, Materia> getMaterias() {
+		return materiasDisponibles;
+	}
+
+
+	public void setMaterias(Map<Integer, Materia> materias) {
+		this.materiasDisponibles = materias;
+	}
+
+
+	public Set<Alumno> getAlumnos() {
+		return alumnos;
+	}
+
+
+	public void setAlumnos(Set<Alumno> alumnos) {
+		this.alumnos = alumnos;
+	}
+
+
+	public Set<Docente> getDocentes() {
+		return docentes;
+	}
+
+
+	public void setDocentes(Set<Docente> docentes) {
+		this.docentes = docentes;
+	}
+
+
+	public Map<Integer, CicloLectivo> getCicloElectivos() {
+		return cicloElectivos;
+	}
+
+
+	public void setCicloElectivos(Map<Integer, CicloLectivo> cicloElectivos) {
+		this.cicloElectivos = cicloElectivos;
+	}
+
+
+	public List<Comision> getComisiones() {
+		return comisiones;
+	}
+
+
+	public void setComisiones(List<Comision> comisiones) {
+		this.comisiones = comisiones;
+	}
+
+
+	public List<Aula> getAulas() {
+		return aulas;
+	}
+
+
+	public void setAulas(List<Aula> aulas) {
+		this.aulas = aulas;
+	}
+
+
+	public List<Curso> getCursos() {
+		return cursos;
+	}
+
+
+	public void setCursos(List<Curso> cursos) {
+		this.cursos = cursos;
+	}
+
+
+	public Map<String, Map<String, Integer>> getNotasPorAlumnoYCurso() {
+		return notasPorAlumnoYCurso;
+	}
+
+
+	public void setNotasPorAlumnoYCurso(Map<String, Map<String, Integer>> notasPorAlumnoYCurso) {
+		this.notasPorAlumnoYCurso = notasPorAlumnoYCurso;
+	}
+
+
+	public Map<Integer, Materia> getMateriasDisponibles() {
+		return materiasDisponibles;
+	}
+
+
+	public void setMateriasDisponibles(Map<Integer, Materia> materiasDisponibles) {
+		this.materiasDisponibles =  materiasDisponibles;
+	}
+
+
+	public Curso getCurso() {
+		return curso;
+	}
+
+
+	public void setCurso(Curso curso) {
+		this.curso = curso;
+	}
+
 
 	public int getId() {
 		return id;
@@ -53,8 +155,8 @@ public class Universidad {
 
 	// -------------------------------------------------------------------------------------------
 	public void agregarMateria(Materia materia) {
-		if (!materias.containsValue(materia)) {
-			this.materias.put(materia.getId(), materia);
+		if (!materiasDisponibles.containsValue(materia)) {
+			this.materiasDisponibles.put(materia.getId(), materia);
 		} else {
 			throw new IllegalArgumentException("Materia ya existente");
 		}
@@ -117,7 +219,7 @@ public class Universidad {
 	}
 
 	public Integer obtenerCantidadDeMaterias() {
-		return this.materias.size();
+		return this.materiasDisponibles.size();
 	}
 
 	public Integer obtenerCantidadDeComisiones() {
@@ -145,12 +247,12 @@ public class Universidad {
 
 	private Materia getMateriaPorCodigo(Integer codigoMateria) {
 
-		return materias.get(codigoMateria);
+		return materiasDisponibles.get(codigoMateria);
 	}
 
 	private boolean existeMateria(Integer codigoMateria) {
 
-		return materias.containsKey(codigoMateria);
+		return materiasDisponibles.containsKey(codigoMateria);
 	}
 
 	public void eliminarCorrelativa(Integer codigoMateria, Integer codigoMateriaCorrelativa) {
@@ -251,6 +353,25 @@ public class Universidad {
 		}
 		throw new IllegalArgumentException("no existe alumno");
 
+	}
+	
+	public Materia[] obtenerMateriasQueFaltanCursarParaUnAlumno(Integer idAlumno) {
+		Alumno alumno = buscarAlumnoPorId(idAlumno);
+		
+		if (alumno == null) {
+			throw new IllegalArgumentException("No existe este alumno");
+		}
+		
+		List<Materia> materiasCursadas = alumno.getMateriasCursadas();
+		
+		List<Materia> materiasFaltanCursar =  new ArrayList<Materia>();
+		
+		for (Materia materia : materiasDisponibles.values()) {
+			if (!materiasCursadas.contains(materia)) {
+				materiasFaltanCursar.add(materia);
+			}
+		}
+		return materiasFaltanCursar.toArray(new Materia[0]);
 	}
 
 }
