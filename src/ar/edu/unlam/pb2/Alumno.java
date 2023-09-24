@@ -3,9 +3,11 @@ package ar.edu.unlam.pb2;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,6 +24,7 @@ public class Alumno {
 	private List<Curso> cursosInscritos;
 	private List<Nota> notasRegistradas;
 	private List<Materia> materiasCursadas;
+	private Map<Materia, Double> notasPorMateria;
 
 	public Alumno(int id, Integer dni, String nombre, String apellido, LocalDate fechaNacimiento,
 			LocalDate fechaIngreso) {
@@ -35,19 +38,31 @@ public class Alumno {
 		this.cursosInscritos = new ArrayList<Curso>();
 		this.notasRegistradas = new ArrayList<Nota>();
 		this.materiasCursadas = new ArrayList<Materia>();
+		this.notasPorMateria = new HashMap<Materia, Double>();
 
 	}
-	
+
+	public Map<Materia, Double> getNotasPorMateria() {
+		return notasPorMateria;
+	}
+
+	public void setNotasPorMateria(Map<Materia, Double> notasPorMateria) {
+		this.notasPorMateria = notasPorMateria;
+	}
+
+	public Alumno(int id, String nombre, String apellido) {
+		this.id = id;
+		this.nombre = nombre;
+		this.apellido = apellido;
+	}
 
 	public List<Materia> getMateriasCursadas() {
 		return materiasCursadas;
 	}
 
-
 	public void setMateriasCursadas(List<Materia> materiasCursadas) {
 		this.materiasCursadas = materiasCursadas;
 	}
-
 
 	public int getId() {
 		return id;
@@ -186,5 +201,19 @@ public class Alumno {
 
 	public void agregarMateriaCursada(Materia materia) {
 		materiasCursadas.add(materia);
+	}
+
+	public void asignarNotaEnMateria(Materia materia, Double nota) {
+		notasPorMateria.put(materia, nota);
+	}
+
+	public double obtenerNotaEnMateria(Materia materia) {
+		// Verificar si el alumno tiene una nota registrada para la materia dada
+		if (notasPorMateria.containsKey(materia)) {
+			return notasPorMateria.get(materia);
+		} else {
+			return -1.0; // Si no hay nota registrada, puedes devolver un valor especial (por ejemplo,
+							// -1)
+		}
 	}
 }

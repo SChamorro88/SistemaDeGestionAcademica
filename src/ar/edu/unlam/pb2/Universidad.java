@@ -35,107 +35,86 @@ public class Universidad {
 		this.cursos = new ArrayList<Curso>();
 		this.notasPorAlumnoYCurso = new HashMap<>();
 	}
-	
 
 	public Map<Integer, Materia> getMaterias() {
 		return materiasDisponibles;
 	}
 
-
 	public void setMaterias(Map<Integer, Materia> materias) {
 		this.materiasDisponibles = materias;
 	}
-
 
 	public Set<Alumno> getAlumnos() {
 		return alumnos;
 	}
 
-
 	public void setAlumnos(Set<Alumno> alumnos) {
 		this.alumnos = alumnos;
 	}
-
 
 	public Set<Docente> getDocentes() {
 		return docentes;
 	}
 
-
 	public void setDocentes(Set<Docente> docentes) {
 		this.docentes = docentes;
 	}
-
 
 	public Map<Integer, CicloLectivo> getCicloElectivos() {
 		return cicloElectivos;
 	}
 
-
 	public void setCicloElectivos(Map<Integer, CicloLectivo> cicloElectivos) {
 		this.cicloElectivos = cicloElectivos;
 	}
-
 
 	public List<Comision> getComisiones() {
 		return comisiones;
 	}
 
-
 	public void setComisiones(List<Comision> comisiones) {
 		this.comisiones = comisiones;
 	}
-
 
 	public List<Aula> getAulas() {
 		return aulas;
 	}
 
-
 	public void setAulas(List<Aula> aulas) {
 		this.aulas = aulas;
 	}
-
 
 	public List<Curso> getCursos() {
 		return cursos;
 	}
 
-
 	public void setCursos(List<Curso> cursos) {
 		this.cursos = cursos;
 	}
-
 
 	public Map<String, Map<String, Integer>> getNotasPorAlumnoYCurso() {
 		return notasPorAlumnoYCurso;
 	}
 
-
 	public void setNotasPorAlumnoYCurso(Map<String, Map<String, Integer>> notasPorAlumnoYCurso) {
 		this.notasPorAlumnoYCurso = notasPorAlumnoYCurso;
 	}
-
 
 	public Map<Integer, Materia> getMateriasDisponibles() {
 		return materiasDisponibles;
 	}
 
-
 	public void setMateriasDisponibles(Map<Integer, Materia> materiasDisponibles) {
-		this.materiasDisponibles =  materiasDisponibles;
+		this.materiasDisponibles = materiasDisponibles;
 	}
-
 
 	public Curso getCurso() {
 		return curso;
 	}
 
-
 	public void setCurso(Curso curso) {
 		this.curso = curso;
 	}
-
 
 	public int getId() {
 		return id;
@@ -354,24 +333,56 @@ public class Universidad {
 		throw new IllegalArgumentException("no existe alumno");
 
 	}
-	
+
 	public Materia[] obtenerMateriasQueFaltanCursarParaUnAlumno(Integer idAlumno) {
 		Alumno alumno = buscarAlumnoPorId(idAlumno);
-		
+
 		if (alumno == null) {
 			throw new IllegalArgumentException("No existe este alumno");
 		}
-		
+
 		List<Materia> materiasCursadas = alumno.getMateriasCursadas();
-		
-		List<Materia> materiasFaltanCursar =  new ArrayList<Materia>();
-		
+
+		List<Materia> materiasFaltanCursar = new ArrayList<Materia>();
+
 		for (Materia materia : materiasDisponibles.values()) {
 			if (!materiasCursadas.contains(materia)) {
 				materiasFaltanCursar.add(materia);
 			}
 		}
 		return materiasFaltanCursar.toArray(new Materia[0]);
+	}
+
+	public String obtenerReporteDeNotasDeAlumnosDeCurso(int idCurso) {
+		Curso curso = buscarCursoPorId(idCurso);
+		if (curso == null) {
+			throw new IllegalArgumentException("Curso no encontrado");
+		}
+		Materia materia = curso.getMateria();
+		List<Alumno> alumnos = curso.getAlumnosInscritos();
+
+		StringBuilder reporte = new StringBuilder();
+		reporte.append("ID del Curso: ").append(idCurso).append("\n");
+		reporte.append("Materia: ").append(materia.getNombre()).append("\n");
+		reporte.append("Dni\tNombre\tApellido\tNota\n");
+
+		for (Alumno alumno : alumnos) {
+			Double nota = alumno.obtenerNotaEnMateria(materia);
+			// Agregar la información del alumno y su nota al reporte
+			reporte.append(alumno.getDni()).append("\t").append(alumno.getNombre()).append("\t")
+					.append(alumno.getApellido()).append("\t").append(nota).append("\n");
+			
+		}
+		return reporte.toString();
+	}
+
+	private Curso buscarCursoPorId(int idCurso) {
+		for (Curso curso : cursos) {
+			if (curso.getId() == idCurso) {
+				return curso;
+			}
+		}
+		throw new IllegalArgumentException("No se encuentra el id de curso");
 	}
 
 }

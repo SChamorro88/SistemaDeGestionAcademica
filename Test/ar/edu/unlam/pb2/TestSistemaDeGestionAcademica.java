@@ -307,7 +307,7 @@ public class TestSistemaDeGestionAcademica {
 	}
 
 	@Test
-	public void testObtenerMateriasQueFaltanCursarParaUnAlumno() {
+	public void QueSePuedaObtenerMateriasQueFaltanCursarParaUnAlumno() {
 		Materia matematicas = new Materia(1, "Matemáticas");
 		Materia fisica = new Materia(2, "Física");
 
@@ -318,12 +318,56 @@ public class TestSistemaDeGestionAcademica {
 		universidad.agregarMateria(matematicas);
 		universidad.agregarMateria(fisica);
 		universidad.agregarMateria(new Materia(3, "Química"));
-		
+
 		universidad.agregarAlumno(alumno);
-		
+
 		Materia[] materiasFaltanCursar = universidad.obtenerMateriasQueFaltanCursarParaUnAlumno(1);
-		 assertArrayEquals(new Materia[] { new Materia(3, "Química") }, materiasFaltanCursar);
-		
-		}
+		assertArrayEquals(new Materia[] { new Materia(3, "Química") }, materiasFaltanCursar);
+
+	}
+
+	@Test
+	public void ObtenerReporteDeNotasDeAumnosDeCurso() {
+		   // Crear algunas materias
+        Materia matematicas = new Materia(1, "Matemáticas");
+        Materia fisica = new Materia(2, "Física");
+        Materia quimica = new Materia(3, "Química");
+        
+        universidad.agregarMateria(quimica);
+        universidad.agregarMateria(matematicas);
+        universidad.agregarMateria(fisica);
+        
+        universidad.agregarMateriaCorrelativa(1, 2);
+        universidad.agregarMateriaCorrelativa(2, 3);
+        
+        // Crear algunos alumnos
+        Alumno alumno1 = new Alumno(101, "Juan", "Pérez");
+        Alumno alumno2 = new Alumno(102, "María", "Gómez");
+        Alumno alumno3 = new Alumno(103, "Carlos", "López");
+       
+        alumno.asignarNotaEnMateria(matematicas, 8.5);
+        alumno.asignarNotaEnMateria(quimica, 2.0);
+    
+
+        // Asignar notas a los alumnos en las materias
+           // Crear cursos y agregar alumnos
+        Curso curso1 = new Curso(1, matematicas, cicloLectivo, Turnos.MANIANA, 30);
+        Curso curso2 = new Curso(2, fisica, cicloLectivo, Turnos.NOCHE, 20);
+
+        curso1.agregarAlumnoInscrito(alumno);
+      
+
+        // Agregar cursos al sistema
+        universidad.agregarCurso(curso1);
+        universidad.agregarCurso(curso2);
+        
+        String reporte = universidad.obtenerReporteDeNotasDeAlumnosDeCurso(1);
+        String resultadoEsperado = "ID del Curso: 1\n" +
+                "Materia: Matemáticas\n" +
+                "Dni\tNombre\tApellido\tNota\n" +
+                "1231245\tPedro\tPerez\t8.5\n" ;
+
+        assertEquals(resultadoEsperado, reporte);
+	}
 
 }
