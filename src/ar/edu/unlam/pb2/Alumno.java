@@ -2,15 +2,12 @@ package ar.edu.unlam.pb2;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Alumno {
 
@@ -41,6 +38,8 @@ public class Alumno {
 		this.notasPorMateria = new HashMap<Materia, Double>();
 
 	}
+	
+	
 
 	public Map<Materia, Double> getNotasPorMateria() {
 		return notasPorMateria;
@@ -204,7 +203,7 @@ public class Alumno {
 	}
 
 	public void asignarNotaEnMateria(Materia materia, Double nota) {
-		notasPorMateria.put(materia, nota);
+		this.notasPorMateria.put(materia, nota);
 	}
 
 	public double obtenerNotaEnMateria(Materia materia) {

@@ -5,13 +5,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,21 +26,26 @@ public class TestSistemaDeGestionAcademica {
 
 	/*
 	 * ACLARACION: SE USO IllegalArgumentException para generar mensajes
-	 * personalizados para no crear n cantidad de excepciones especificas y
+	 * personalizados para no crear "n" cantidad de excepciones especificas y
 	 * sobre-saturar. Además tambien Stream y expresiones Lambda para reducir lineas
 	 * de codigo.
 	 */
 	// ---------------------------------------------------------------------------
 	@Before
 	public void setUp() {
-		universidad = new Universidad(1, "Universidad De La Matanza");
+		Integer idUniversidad = 1;
+		String nombreUniversidad = "Universidad De La Matanza";
+		universidad = new Universidad(idUniversidad, nombreUniversidad);
 
-		materia = new Materia(1, "Matematica");
+		Integer idMateria = 1;
+		String nombreMateria = "Matematica";
+		materia = new Materia(idMateria, nombreMateria);
 
+		Integer idAlumno = 1;
 		Integer dni = 1231245;
 		LocalDate fechaIngeso = LocalDate.of(2021, 03, 01);
 		LocalDate fechaNacimiento = LocalDate.of(1999, 07, 21);
-		alumno = new Alumno(1, dni, "Pedro", "Perez", fechaNacimiento, fechaIngeso);
+		alumno = new Alumno(idAlumno, dni, "Pedro", "Perez", fechaNacimiento, fechaIngeso);
 
 		Integer dniDocente = 124542134;
 		LocalDate fechaIngesoDocente = LocalDate.of(2021, 03, 01);
@@ -58,13 +61,16 @@ public class TestSistemaDeGestionAcademica {
 				fechaInicioInscripcion, fechaFinalizacionInscripcion);
 
 		Turnos turno = Turnos.MANIANA;
-		comision = new Comision(1, materia, cicloLectivo, turno);
+		Integer idComsion = 1;
+		comision = new Comision(idComsion, materia, cicloLectivo, turno);
 
 		Integer id = 1;
 		Integer cantidadAlumnos = 30;
 		aula = new Aula(id, cantidadAlumnos);
 
-		curso = new Curso(1, materia, cicloLectivo, turno, 30);
+		Integer idCurso = 1;
+		Integer cupoMaximo = 30;
+		curso = new Curso(idCurso, materia, cicloLectivo, turno, cupoMaximo);
 
 	}
 
@@ -253,10 +259,6 @@ public class TestSistemaDeGestionAcademica {
 	public void queSePuedaRegistrarUnaNotaDeUnAlumno() {
 		Alumno alumno = new Alumno(1, 12345233, "Juan", "Perez", LocalDate.of(1990, 1, 1), LocalDate.now());
 		Materia materia = new Materia(1, "Matemáticas");
-		CicloLectivo cicloLectivo = new CicloLectivo(1, LocalDate.now(), LocalDate.now(), LocalDate.now(),
-				LocalDate.now());
-		Comision comision = new Comision(1, materia, cicloLectivo, Turnos.MANIANA);
-		Aula aula = new Aula(1, 30);
 
 		Materia fisica = new Materia(2, "Física");
 		universidad.agregarMateria(materia);
@@ -278,6 +280,7 @@ public class TestSistemaDeGestionAcademica {
 		assertTrue(alumno.getNotasRegistradas().contains(nota));
 
 	}
+	// -------------------------------------------------------------------------------------------
 
 	@Test
 	public void queSePuedoObtenerListadoMateriasAprobadasParaUnAlumno() {
@@ -312,6 +315,7 @@ public class TestSistemaDeGestionAcademica {
 		assertArrayEquals(esperadasArray, aprobadasArray);
 
 	}
+	// -------------------------------------------------------------------------------------------
 
 	@Test
 	public void QueSePuedaObtenerMateriasQueFaltanCursarParaUnAlumno() {
@@ -332,6 +336,7 @@ public class TestSistemaDeGestionAcademica {
 		assertArrayEquals(new Materia[] { new Materia(3, "Química") }, materiasFaltanCursar);
 
 	}
+	// -------------------------------------------------------------------------------------------
 
 	@Test
 	public void ObtenerReporteDeNotasDeAumnosDeCurso() {
@@ -348,19 +353,23 @@ public class TestSistemaDeGestionAcademica {
 		universidad.agregarMateriaCorrelativa(2, 3);
 
 		// Crear algunos alumnos
-		Alumno alumno1 = new Alumno(101, "Juan", "Pérez");
-		Alumno alumno2 = new Alumno(102, "María", "Gómez");
-		Alumno alumno3 = new Alumno(103, "Carlos", "López");
-
-		alumno.asignarNotaEnMateria(matematicas, 8.5);
-		alumno.asignarNotaEnMateria(quimica, 2.0);
-
+		Alumno alumno1 = new Alumno(2, 6785543, "Juan", "Gomez", LocalDate.of(1999, 02, 11),
+				LocalDate.of(2021, 03, 15));
+		Alumno alumno2 = new Alumno(3, 5676546, "Maria", "Rojas", LocalDate.of(2000, 05, 22),
+				LocalDate.of(2021, 03, 15));
 		// Asignar notas a los alumnos en las materias
+		alumno.asignarNotaEnMateria(matematicas, 8.5);
+		alumno1.asignarNotaEnMateria(matematicas, 7.0);
+		alumno2.asignarNotaEnMateria(matematicas, 5.0);
+
 		// Crear cursos y agregar alumnos
 		Curso curso1 = new Curso(1, matematicas, cicloLectivo, Turnos.MANIANA, 30);
 		Curso curso2 = new Curso(2, quimica, cicloLectivo, Turnos.NOCHE, 20);
 
+		// Inscribir alumno a un curso
 		curso1.agregarAlumnoInscrito(alumno);
+		curso1.agregarAlumnoInscrito(alumno1);
+		curso1.agregarAlumnoInscrito(alumno2);
 
 		// Agregar cursos al sistema
 		universidad.agregarCurso(curso1);
@@ -368,7 +377,7 @@ public class TestSistemaDeGestionAcademica {
 
 		String reporte = universidad.obtenerReporteDeNotasDeAlumnosDeCurso(1);
 		String resultadoEsperado = "ID del Curso: 1\n" + "Materia: Matemáticas\n" + "Dni\tNombre\tApellido\tNota\n"
-				+ "1231245\tPedro\tPerez\t8.5\n";
+				+ "1231245\tPedro\tPerez\t8.5\n" + "6785543\tJuan\tGomez\t7.0\n" + "5676546\tMaria\tRojas\t5.0\n";
 
 		assertEquals(resultadoEsperado, reporte);
 	}
