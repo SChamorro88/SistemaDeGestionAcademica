@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -123,8 +124,32 @@ public class TestSistemaDeGestionAcademica {
 
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void QueNoSePuedaAgregarUnaMateriaDelMismoId() {
+		universidad.agregarMateria(materia);
+		universidad.agregarMateria(materia);
+
+		Integer valorEsperado = 1;
+		Integer valorObtenido = universidad.obtenerCantidadDeMaterias();
+
+		assertEquals(valorEsperado, valorObtenido);
+
+	}
+
 	@Test
 	public void QueSePuedaAgregarUnAlumno() {
+		universidad.agregarAlumno(alumno);
+
+		Integer valorEsperado = 1;
+		Integer valorObtenido = universidad.obtenerCantidadDeAlumnos();
+
+		assertEquals(valorEsperado, valorObtenido);
+
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void QueNOSePuedaAgregarUnAlumnoConElMismoDni() {
+		universidad.agregarAlumno(alumno);
 		universidad.agregarAlumno(alumno);
 
 		Integer valorEsperado = 1;
@@ -145,6 +170,18 @@ public class TestSistemaDeGestionAcademica {
 
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void QueNoSePuedaAgregarUnDocenteConElMismoDni() {
+		universidad.agregarDocente(docente);
+		universidad.agregarDocente(docente);
+
+		Integer valorEsperado = 1;
+		Integer valorObtenido = universidad.obtenerCantidadDeDocentes();
+
+		assertEquals(valorEsperado, valorObtenido);
+
+	}
+
 	@Test
 	public void QueSePuedaAgregarUnCicloLectivo() {
 		universidad.agregarCicloLectivo(cicloLectivo);
@@ -156,8 +193,32 @@ public class TestSistemaDeGestionAcademica {
 
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void QueNoSePuedaAgregarUnCicloLectivoConElMismoId() {
+		universidad.agregarCicloLectivo(cicloLectivo);
+		universidad.agregarCicloLectivo(cicloLectivo);
+
+		Integer valorEsperado = 1;
+		Integer valorObtenido = universidad.obtenerCantidadDeCiclosLectivos();
+
+		assertEquals(valorEsperado, valorObtenido);
+
+	}
+
 	@Test
 	public void QueSePuedaAgregarUnComision() {
+		universidad.agregarComision(comision);
+
+		Integer valorEsperado = 1;
+		Integer valorObtenido = universidad.obtenerCantidadDeComisiones();
+
+		assertEquals(valorEsperado, valorObtenido);
+
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void QueNoSePuedaAgregarUnComisionParaLaMismaMateriaCicloYTurno() {
+		universidad.agregarComision(comision);
 		universidad.agregarComision(comision);
 
 		Integer valorEsperado = 1;
@@ -182,6 +243,27 @@ public class TestSistemaDeGestionAcademica {
 	@Test
 	public void QueSePuedaAsignarMateriaCorrelativa() {
 		Materia materia1 = new Materia(1, "MAT1");
+		Materia materia2 = new Materia(2, "MAT2");
+		Materia materia3 = new Materia(3, "MAT3");
+
+		universidad.agregarMateria(materia1);
+		universidad.agregarMateria(materia2);
+		universidad.agregarMateria(materia3);
+
+		universidad.agregarMateriaCorrelativa(1, 2);
+		universidad.agregarMateriaCorrelativa(2, 3);
+
+		// Verificar que las materias correlativas se han agregado correctamente
+		assertTrue(materia1.getMateriasCorrelativas().contains(materia2));
+		assertTrue(materia2.getMateriasCorrelativas().contains(materia1));
+		assertTrue(materia2.getMateriasCorrelativas().contains(materia3));
+		assertTrue(materia3.getMateriasCorrelativas().contains(materia2));
+
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void QueNoSePuedaAsignarMateriaCorrelativaSiUnoOAmbosCodigosDeMateriaNoExisten() {
+		Materia materia1 = new Materia(0, "MAT1");
 		Materia materia2 = new Materia(2, "MAT2");
 		Materia materia3 = new Materia(3, "MAT3");
 
@@ -229,9 +311,38 @@ public class TestSistemaDeGestionAcademica {
 
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void QueNoSePuedaEliminarMateriaCorrelativaSiUnoOAmbosCodigosDeMateriaNoExisten() {
+		Materia materia1 = new Materia(0, "MAT1");
+		Materia materia2 = new Materia(2, "MAT2");
+		Materia materia3 = new Materia(3, "MAT3");
+
+		universidad.agregarMateria(materia1);
+		universidad.agregarMateria(materia2);
+		universidad.agregarMateria(materia3);
+
+		universidad.agregarMateriaCorrelativa(1, 2);
+		universidad.agregarMateriaCorrelativa(2, 3);
+
+		// Verificar que las materias correlativas se han agregado correctamente
+		assertTrue(materia1.getMateriasCorrelativas().contains(materia2));
+		assertTrue(materia2.getMateriasCorrelativas().contains(materia1));
+		assertTrue(materia2.getMateriasCorrelativas().contains(materia3));
+		assertTrue(materia3.getMateriasCorrelativas().contains(materia2));
+
+		// Eliminar la correlativa
+		universidad.eliminarCorrelativa(1, 2);
+
+		// Verificar que la correlativa se haya eliminado correctamente
+		assertFalse(materia1.getMateriasCorrelativas().contains(materia2));
+		assertFalse(materia2.getMateriasCorrelativas().contains(materia1));
+
+	}
+
 	// ---------------------------------------------------------------------------------------
 	@Test
 	public void QueSePuedaInscribirAlumnoACurso() {
+
 		universidad.agregarAlumno(alumno);
 		universidad.agregarCurso(curso);
 
@@ -242,15 +353,107 @@ public class TestSistemaDeGestionAcademica {
 		assertTrue(curso.estaInscrito(alumno));
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void QueNoSePuedaInscribirAlumnoACursoSiNoEstaDentroDeLaFechaPermitida() {
+		universidad.agregarAlumno(alumno);
+		universidad.agregarCurso(curso);
+
+		// Verificar que se pueda inscribir al alumno al curso
+		LocalDate fechaInscripcion = LocalDate.of(2023, 6, 15);
+		universidad.inscribirAlumnoACurso(alumno, curso, fechaInscripcion);
+
+		assertTrue(curso.estaInscrito(alumno));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void QueNoSePuedaInscribirAlumnoACursoSiElCursoNoEstaDadoDeAlta() {
+		universidad.agregarAlumno(alumno);
+
+		// Verificar que se pueda inscribir al alumno al curso
+		LocalDate fechaInscripcion = LocalDate.of(2023, 8, 15);
+		universidad.inscribirAlumnoACurso(alumno, curso, fechaInscripcion);
+
+		assertTrue(curso.estaInscrito(alumno));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void QueNoSePuedaInscribirAlumnoACursoPorqueExcedioElCupo() {
+		universidad.agregarAlumno(alumno);
+		universidad.agregarCurso(curso);
+
+		curso.setCupoActual(30);
+		curso.agregarAlumnoInscrito(alumno);
+
+		// Verificar que se pueda inscribir al alumno al curso
+		LocalDate fechaInscripcion = LocalDate.of(2023, 8, 15);
+		universidad.inscribirAlumnoACurso(alumno, curso, fechaInscripcion);
+
+		assertTrue(curso.estaInscrito(alumno));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void QueNoSePuedaInscribirAlumnoACursoQueEsteIncriptoEnOtroCursoElMismoDiaYTurno() {
+		Materia quimica = new Materia(3, "Química");
+		Curso curso2 = new Curso(2, quimica, cicloLectivo, Turnos.NOCHE, 20);
+
+		curso.setFechaCurso(LocalDate.of(2023, 8, 15));
+		curso2.setFechaCurso(LocalDate.of(2023, 8, 15));
+		curso2.setTurno(Turnos.MANIANA);
+
+		universidad.agregarAlumno(alumno);
+		universidad.agregarCurso(curso);
+
+		universidad.agregarCurso(curso);
+		universidad.agregarCurso(curso2);
+
+		// Verificar que se pueda inscribir al alumno al curso
+		LocalDate fechaInscripcion = LocalDate.of(2023, 8, 15);
+		universidad.inscribirAlumnoACurso(alumno, curso, fechaInscripcion);
+		universidad.inscribirAlumnoACurso(alumno, curso2, fechaInscripcion);
+
+		assertTrue(curso.estaInscrito(alumno));
+	}
 	// ----------------------------------------------------------------------------------------
 
 	@Test
 	public void queSePuedaAsignarProfesoresALCurso() {
+		universidad.agregarCurso(curso);
 		curso.asignarDocente(docente);
 
 		assertTrue(curso.tieneProfesor(docente));
 
 		assertTrue(docente.tieneCurso(curso));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void queNoSePuedaAsignarProfesoresALCursoPorQueNoExisteElDocente() {
+		universidad.agregarCurso(curso);
+		curso.asignarDocente(null);
+
+		assertTrue(curso.tieneProfesor(docente));
+
+		assertTrue(docente.tieneCurso(curso));
+	}
+
+	@Test(expected = AssertionError.class)
+	public void queAlAsignarUnProfesorA21AlumnosLanceUnError() {
+
+		for (int i = 0; i < 21; i++) { // Agregar 21 alumnos
+			Alumno alumno = new Alumno(200 + i, "Nombre" + i, "Apellido" + i);
+			curso.agregarAlumnoInscrito(alumno);
+		}
+		universidad.agregarCurso(curso);
+
+		curso.asignarDocente(docente);
+
+		Integer valorEsperado2 = 21;
+		Integer valorObtenido2 = curso.getAlumnosInscritos().size();
+		assertEquals(valorEsperado2, valorObtenido2);
+
+		Integer valorEsperado = 2;
+		Integer valorObtenido = curso.getDocentesAsignados().size();
+		assertEquals(valorEsperado, valorObtenido);
+
 	}
 
 	// ----------------------------------------------------------------------------------------
@@ -274,7 +477,7 @@ public class TestSistemaDeGestionAcademica {
 		LocalDate fechaInscripcion = LocalDate.of(2023, 8, 15);
 		universidad.inscribirAlumnoACurso(alumno, curso, fechaInscripcion);
 		// Crear una nota válida
-		Nota nota = new Nota("1erParc", 6, fisica);
+		Nota nota = new Nota("1erParc", 6.0, fisica);
 		curso.registrarNota(curso.getId(), alumno.getId(), nota);
 
 		assertTrue(alumno.getNotasRegistradas().contains(nota));
@@ -380,6 +583,29 @@ public class TestSistemaDeGestionAcademica {
 				+ "1231245\tPedro\tPerez\t8.5\n" + "6785543\tJuan\tGomez\t7.0\n" + "5676546\tMaria\tRojas\t5.0\n";
 
 		assertEquals(resultadoEsperado, reporte);
+	}
+
+	@Test
+	public void QueSePuedaCalcularElPromedio() {
+		Materia quimica = new Materia(3, "Química");
+		universidad.agregarAlumno(alumno);
+
+		Curso curso1 = curso;
+		Curso curso2 = new Curso(2, quimica, cicloLectivo, Turnos.NOCHE, 20);
+		universidad.agregarCurso(curso1);
+		universidad.agregarCurso(curso2);
+		
+		Nota nota = new Nota(curso1,"1erPar", 8.5, curso.getMateria());
+		Nota nota2 = new Nota(curso2,"1erPar", 7.0, quimica);
+			
+		alumno.registrarNota(nota);
+		alumno.registrarNota(nota2);
+		
+		double valorObtenido = universidad.calcularPromedio(alumno.getId());
+		
+		double valorEsperado = 7.75;
+		assertEquals(valorEsperado,valorObtenido,0.01);
+		
 	}
 
 }

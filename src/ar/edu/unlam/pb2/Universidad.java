@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -161,7 +162,12 @@ public class Universidad {
 	}
 
 	public void agregarDocente(Docente docente) {
-		this.docentes.add(docente);
+		if (!docentes.contains(docente)) {
+			this.docentes.add(docente);
+		} else {
+			throw new IllegalArgumentException("Docente ya existente");
+		}
+		
 
 	}
 
@@ -385,6 +391,33 @@ public class Universidad {
 			}
 		}
 		throw new IllegalArgumentException("No se encuentra el id de curso");
+	}
+
+	public double calcularPromedio(int id) {
+		Alumno alumno = buscarAlumnoPorId(id);
+		if (alumno == null) {
+			throw new IllegalArgumentException("Alumno no existe");
+		}
+		
+		List<Double>notas = new ArrayList<Double>();
+		
+		for (Curso curso : cursos) {
+			double nota = alumno.obtenerNotaEnCurso(curso.getId());
+			
+			if (nota >= 0) {
+				notas.add(nota);
+			}
+		}
+		if (notas.isEmpty()) {
+			throw new IllegalArgumentException("El alumno no registra notas");
+		}
+		
+		double sumaNotas = 0;
+		
+		for (Double nota : notas) {
+			sumaNotas += nota;
+		}
+		return sumaNotas / notas.size();
 	}
 
 }

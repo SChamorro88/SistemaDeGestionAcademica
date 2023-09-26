@@ -163,25 +163,30 @@ public class Curso {
 		}
 
 	}
+	
 
 	public boolean estaInscrito(Alumno alumno) {
 
 		return alumnosInscritos.contains(alumno);
 	}
 
-	public void asignarDocente(Docente docente) {
+	public boolean asignarDocente(Docente docente) {
 		if (docente != null) {
 			Integer numeroDocentes = docentesAsignados.size();
-			Integer alumnosIncritos = cupoActual;
+			Integer alumnosIncritos = alumnosInscritos.size();
 
 			int docentesNecesarios = (alumnosIncritos / 20) + 1;
 
 			if (numeroDocentes < docentesNecesarios) {
 				docentesAsignados.add(docente);
 				docente.asignarCurso(this);
+				return true;
 			}
 
+		} else {
+			throw new IllegalArgumentException("El docente no existe");
 		}
+		return false;
 	}
 
 	public boolean tieneProfesor(Docente docente) {

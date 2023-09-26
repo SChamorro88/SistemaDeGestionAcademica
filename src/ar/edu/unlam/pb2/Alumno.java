@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -193,8 +194,8 @@ public class Alumno {
 
 	}
 
-	public void aprobarMateria(Materia fisica) {
-		materiasAprobadas.add(fisica);
+	public void aprobarMateria(Materia materia) {
+		materiasAprobadas.add(materia);
 
 	}
 
@@ -214,5 +215,14 @@ public class Alumno {
 			return -1.0; // Si no hay nota registrada, puedes devolver un valor especial (por ejemplo,
 							// -1)
 		}
+	}
+	
+	public double obtenerNotaEnCurso(Integer idCurso) {
+		for (Nota nota  : notasRegistradas) {
+			if (nota.getCurso().getId() == idCurso) {
+				return nota.getValor();
+			}
+		}
+		return -1.0;
 	}
 }

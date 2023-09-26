@@ -2,6 +2,7 @@ package ar.edu.unlam.pb2;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Docente {
@@ -81,5 +82,24 @@ public class Docente {
 	public boolean tieneCurso(Curso curso) {
 		return cursosAsignados.contains(curso);
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(dni);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Docente other = (Docente) obj;
+		return Objects.equals(dni, other.dni);
+	}
+	
+	
 
 }
